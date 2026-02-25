@@ -1,10 +1,17 @@
+
+
 name: Run Python Tests
 
 on:
   push:
     branches:
       - main
-
+  schedule:
+    - cron: "*/10 * * * *"
+    
+permissions:
+  contents: write  # Grants permission to push changes
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -25,3 +32,12 @@ jobs:
       - name: Run tests
         run: |
           python test_cal.py
+
+      - name: Add daily commit by Shalini
+        run: |
+          echo "Daily commit on $(date)" >> daily_commit_log.txt
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add daily_commit_log.txt
+          git commit -m "Daily commit: $(date)" || echo "No changes to commit"
+          git push
